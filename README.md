@@ -1,3 +1,9 @@
+This branch contains implementation code for ListView and RecyclerView
+
+Code for [this](https://codelabs.developers.google.com/codelabs/android-training-create-recycler-view/index.html?index=..%2F..%2Fandroid-training#0) Codelab of RecyclerView is also here.
+
+**Checkout Various implementations of ListView in [this](https://github.com/lswarnkar1/NAAD-Sessions-Practice/blob/listview_recyclerview/app/src/main/java/com/lavish/android/practice/ListViewSampleActivity.java) Activity**
+
 # 1. Simple ListView
 
 - Easiest implementation
