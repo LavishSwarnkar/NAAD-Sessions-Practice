@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.lavish.android.practice.adapters.ProductAdapter;
 import com.lavish.android.practice.adapters.ProductRecyclerAdapter;
@@ -30,7 +31,11 @@ public class ListViewSampleActivity extends AppCompatActivity {
         setupSimpleListView();
     }
 
-    //ListView methods
+    /**
+     * ListView methods
+     * Learn more here : https://www.notion.so/ListView-RecyclerView-b56c9d266d124b03b35b8e75775b6a91#26d2e7c146e341a3a231417990350d37
+     */
+
 
     private void setupSimpleListView() {
         //Data : List of Strings
