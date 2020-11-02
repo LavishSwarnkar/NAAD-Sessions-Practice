@@ -14,6 +14,14 @@ For example, the range (1, 702) should result in a NumberPicker with values rang
 
 5. (Absolutely Optional) Try defining a method String getReverseColName(int col) which would return column names in reverse alphabets. For example, 1 mapped to Z, 2 mapped to Y, 3 mapped to Z etc. If you are able to do this, add a RadioButtonGroup to your app which would allow the user to choose between “Normal” and “Reverse” order.
 
+
+
 # WeightPicker
 
 Use this starter class [WeightPicker](https://github.com/lswarnkar1/NAAD-Sessions-Practice/blob/number_picker_and_dialogs/app/src/main/java/com/lavish/android/practice/WeightPicker.java) and add it to your CartApp. You will find TODO’s defined in the class itself. Follow them and complete the task.
+
+
+
+## Learning resources
+
+[NumberPicker](https://www.zoftino.com/android-number-picker-tutorial)
