@@ -38,10 +38,9 @@ class ProductEditorDialog {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(areProductDetailsValid())
-                            listener.onProductEdited(product);
-                        else {
+                            listener.onProductEdited(ProductEditorDialog.this.product);
+                        else
                             Toast.makeText(context, "Invalid details!", Toast.LENGTH_SHORT).show();
-                        }
                     }
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -56,7 +55,7 @@ class ProductEditorDialog {
     }
 
 
-    //Checks if all variant details are valid
+    //Checks if all product details are valid
     private boolean areProductDetailsValid() {
         //Check name
         String name = b.name.getText().toString().trim();
@@ -68,9 +67,6 @@ class ProductEditorDialog {
         switch (b.productType.getCheckedRadioButtonId()){
             case R.id.weight_based_rbtn :
 
-                //Set type
-                product.type = WEIGHT_BASED;
-
                 //Get values from views
                 String pricePerKg = b.price.getText().toString().trim()
                         , minQty = b.minQty.getText().toString().trim();
@@ -80,17 +76,18 @@ class ProductEditorDialog {
                     return false;
 
                 //All good, set values of product
-                product.pricePerKg = Integer.parseInt(pricePerKg);
-                product.minQty = extractMinQtyFromString(minQty);
+                product = new Product(name
+                        , Integer.parseInt(pricePerKg)
+                        , extractMinQtyFromString(minQty));
 
                 return true;
             case R.id.variants_based_rbtn :
 
-                //Set type
-                product.type = VARIANTS_BASED;
-
                 //Get value from view
                 String variants = b.variants.getText().toString().trim();
+
+                //Create product
+                product = new Product(name);
 
                 return areVariantsValid(variants);
         }
@@ -104,14 +101,14 @@ class ProductEditorDialog {
         if(variants.length() == 0)
             return true;
 
+        //Get strings of each variant
         String[] vs = variants.split("\n");
-        Pattern pattern = Pattern.compile("^\\w+,\\d+$");
-        for(int i=0 ; i<vs.length ; i++){
-            String variant = vs[i];
-            if(!pattern.matcher(variant).matches()){
+
+        //Check for each variant format using RegEx
+        Pattern pattern = Pattern.compile("^\\w+(\\s|\\w)+,\\d+$");
+        for (String variant : vs)
+            if (!pattern.matcher(variant).matches())
                 return false;
-            }
-        }
 
         //Extracts Variants from String[]
         product.fromVariantStrings(vs);

@@ -54,12 +54,13 @@
     </RadioGroup>
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/weight_based_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/product_type">
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/product_type"
+        tools:layout_editor_absoluteX="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/price_root"
@@ -74,8 +75,8 @@
                 android:id="@+id/price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Price/Kg" />
+                android:hint="Price/Kg"
+                android:inputType="number" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,13 +101,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/variants_root"
-        android:visibility="gone"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weight_based_root">
 

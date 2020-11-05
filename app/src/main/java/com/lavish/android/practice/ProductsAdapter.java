@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lavish.android.practice.databinding.ProductItemBinding;
+import com.lavish.android.practice.databinding.VariantBasedProductBinding;
+import com.lavish.android.practice.databinding.WeightBasedProductBinding;
 import com.lavish.android.practice.models.Product;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 //Adapter for List of Products
-class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
+class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     //Needed for inflating layout
     private Context context;
@@ -27,55 +29,69 @@ class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
         this.productList = productList;
     }
 
-    //Inflate the view for item and create a ViewHolder object
+    //Inflate the view for item and create a ViewHolder object based on viewType
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //1. Inflate the layout for product_item.xml
-        ProductItemBinding b = ProductItemBinding.inflate(LayoutInflater.from(context)
-                , parent
-                , false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        //2. Create ViewHolder object & return
-        return new ViewHolder(b);
+        if(viewType == Product.WEIGHT_BASED){
+            //Inflate WeightBasedProduct layout
+            WeightBasedProductBinding b = WeightBasedProductBinding.inflate(
+                    LayoutInflater.from(context)
+                    , parent
+                    , false
+            );
+
+            //Create & Return WeightBasedProductVH
+            return new WeightBasedProductVH(b);
+        } else {
+            //Inflate VariantsBasedProduct layout
+            VariantBasedProductBinding b = VariantBasedProductBinding.inflate(
+                    LayoutInflater.from(context)
+                    , parent
+                    , false
+            );
+
+            //Create & Return VariantsBasedProductVH
+            return new VariantsBasedProductVH(b);
+        }
     }
+
+    //Return ViewType based on position
+    @Override
+    public int getItemViewType(int position) {
+        return productList.get(position).type;
+    }
+
 
 
     //Binds the data to view
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         //Get the data at position
         final Product product = productList.get(position);
 
-        //Bind the data
-        //Name & Price
-        holder.b.name.setText(String.format("%s (Rs. %d)", product.name, product.pricePerKg));
+        if(product.type == Product.WEIGHT_BASED){
 
-        //Quantity
-        updateQuantityViews(holder, product);
+            //Get binding
+            WeightBasedProductBinding b = ((WeightBasedProductVH) holder).b;
 
-        //Configure buttons
-        holder.b.incrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                product.minQty++;
-                updateQuantityViews(holder, product);
-            }
-        });
+            //Bind data
+            b.name.setText(product.name);
+            b.pricePerKg.setText("Rs. " + product.pricePerKg);
+            b.minQty.setText("MinQty - " + product.minQty + "kg");
 
-        holder.b.decrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                product.minQty--;
-                updateQuantityViews(holder, product);
-            }
-        });
-    }
+        } else {
 
-    private void updateQuantityViews(@NonNull ViewHolder holder, Product product) {
-        holder.b.quantity.setText(product.minQty + "");
-        holder.b.decrementBtn.setVisibility(product.minQty > 0 ? View.VISIBLE : View.GONE);
-        holder.b.quantity.setVisibility(product.minQty > 0 ? View.VISIBLE : View.GONE);
+            //Get binding
+            VariantBasedProductBinding b = ((VariantsBasedProductVH) holder).b;
+
+            //Bind data
+            b.name.setText(product.name);
+            b.variants.setText(product.variantsString());
+
+        }
+
     }
 
 
@@ -86,16 +102,26 @@ class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
 
 
 
-    //Holds the view for each item
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    //ViewHolder for WeightBasedProduct
+    public static class WeightBasedProductVH extends RecyclerView.ViewHolder{
 
-        private ProductItemBinding b;
+        WeightBasedProductBinding b;
 
-        public ViewHolder(@NonNull ProductItemBinding b) {
+        public WeightBasedProductVH(@NonNull WeightBasedProductBinding b) {
             super(b.getRoot());
             this.b = b;
         }
+    }
 
+    //ViewHolder for VariantsBasedProduct
+    public static class VariantsBasedProductVH extends RecyclerView.ViewHolder{
+
+        VariantBasedProductBinding b;
+
+        public VariantsBasedProductVH(@NonNull VariantBasedProductBinding b) {
+            super(b.getRoot());
+            this.b = b;
+        }
     }
 
 }

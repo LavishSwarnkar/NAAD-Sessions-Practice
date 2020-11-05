@@ -2,6 +2,7 @@ package com.lavish.android.practice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
@@ -17,17 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.lavish.android.practice.R.*;
-
 public class CatalogActivity extends AppCompatActivity {
-
-    /**
-     * 1. Create layout for each item
-     * 2. Add RecyclerView to the layout
-     * 3. Create Adapter for RV
-     * 4. Initialize the adapter
-     * 5. Set the adapter to RV
-     */
 
     private ActivityCatalogBinding b;
     private ArrayList<Product> products;
@@ -53,7 +44,14 @@ public class CatalogActivity extends AppCompatActivity {
         //Set the adapter & LayoutManager to RV
         b.recyclerView.setAdapter(adapter);
         b.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        b.recyclerView.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        );
     }
+
+
+
+    //OPTIONS MENU
 
     //Inflates the option menu
     @Override
@@ -65,13 +63,16 @@ public class CatalogActivity extends AppCompatActivity {
     //OnItem Click Listener for Options Menu
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == id.add_item){
+        if(item.getItemId() == R.id.add_item){
             showProductEditorDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 
     private void showProductEditorDialog() {
         new ProductEditorDialog()
