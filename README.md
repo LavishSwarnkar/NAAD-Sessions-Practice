@@ -1,3 +1,5 @@
+[>>> Download APK here <<<](https://github.com/lswarnkar1/NAAD-Sessions-Practice/raw/ecom_admin_0.2/app/build/outputs/apk/debug/app-debug.apk)
+
 # What we are building
 
 ## Admin eCom
