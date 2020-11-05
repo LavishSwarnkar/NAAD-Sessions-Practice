@@ -3,6 +3,8 @@ This repository contains an Android project with Practice code written during Na
 For each Topic, there is a seperate branch. Current Branches are :
 
 1. [ListView & RecyclerView](https://github.com/lswarnkar1/NAAD-Sessions-Practice/tree/listview_recyclerview)
+2. [NumberPicker & Dialogs](https://github.com/lswarnkar1/NAAD-Sessions-Practice/tree/number_picker_and_dialogs)
+3. [Options Menu & Admin eCom 1.0](https://github.com/lswarnkar1/NAAD-Sessions-Practice/tree/menus)]
 
 # Learning Material
 
