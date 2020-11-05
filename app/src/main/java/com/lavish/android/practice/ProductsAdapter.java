@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lavish.android.practice.databinding.ProductItemBinding;
 import com.lavish.android.practice.models.Product;
@@ -50,33 +49,34 @@ class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
 
         //Bind the data
         //Name & Price
-        holder.b.name.setText(String.format("%s (Rs. %d)", product.name, product.price));
+        holder.b.name.setText(String.format("%s (Rs. %d)", product.name, product.pricePerKg));
 
         //Quantity
-        holder.b.quantity.setText(product.qty + "");
-
-        //DecrementButton & Quantity TV Visibility
-        holder.b.decrementBtn.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
-        holder.b.quantity.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
+        updateQuantityViews(holder, product);
 
         //Configure buttons
         holder.b.incrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                product.qty++;
-                notifyItemChanged(position);
+                product.minQty++;
+                updateQuantityViews(holder, product);
             }
         });
 
         holder.b.decrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                product.qty--;
-                notifyItemChanged(position);
+                product.minQty--;
+                updateQuantityViews(holder, product);
             }
         });
     }
 
+    private void updateQuantityViews(@NonNull ViewHolder holder, Product product) {
+        holder.b.quantity.setText(product.minQty + "");
+        holder.b.decrementBtn.setVisibility(product.minQty > 0 ? View.VISIBLE : View.GONE);
+        holder.b.quantity.setVisibility(product.minQty > 0 ? View.VISIBLE : View.GONE);
+    }
 
 
     @Override
