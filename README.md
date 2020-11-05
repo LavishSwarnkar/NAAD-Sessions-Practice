@@ -27,11 +27,11 @@
 
 - class WeightBasedProduct extends Product (PricePerKg, MinQty)  
 
-- class VariantsBasedProduct extends Product (List<Variant>)
+- class VariantsBasedProduct extends Product (List of Variant)
 
 #### Approach 2 (Single class) (We are going with)
 
-* class Product (ProductType, Name, PricePerKg, MinQty, List<Variant>)
+* class Product (ProductType, Name, PricePerKg, MinQty, List Variant)
 
 ---
 
