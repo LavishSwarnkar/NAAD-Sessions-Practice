@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,7 +72,63 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //OnClick handler for ContextualMenu of Product
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
 
+        switch (item.getItemId()){
+            case R.id.product_edit :
+                editLastSelectedItem();
+                return true;
+
+            case R.id.product_remove :
+                removeLastSelectedItem();
+
+                return true;
+
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void editLastSelectedItem() {
+        //Get data to be edited
+        Product lastSelectedProduct = products.get(adapter.lastSelectedItemPosition);
+
+        //Show Editor Dialog
+        new ProductEditorDialog()
+                .show(this, lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
+                    @Override
+                    public void onProductEdited(Product product) {
+                        //Replace old Data
+                        products.set(adapter.lastSelectedItemPosition, product);
+
+                        //Update view
+                        adapter.notifyItemChanged(adapter.lastSelectedItemPosition);
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        Toast.makeText(CatalogActivity.this, "Cancelled!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void removeLastSelectedItem() {
+        new AlertDialog.Builder(this)
+                .setTitle("Do you really want to remove this product?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        products.remove(adapter.lastSelectedItemPosition);
+                        adapter.notifyItemRemoved(adapter.lastSelectedItemPosition);
+
+                        Toast.makeText(CatalogActivity.this, "Removed", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("CANCEL", null)
+                .show();
+    }
 
 
     private void showProductEditorDialog() {

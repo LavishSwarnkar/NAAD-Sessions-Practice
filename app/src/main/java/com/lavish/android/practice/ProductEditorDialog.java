@@ -13,9 +13,6 @@ import com.lavish.android.practice.models.Product;
 
 import java.util.regex.Pattern;
 
-import static com.lavish.android.practice.models.Product.VARIANTS_BASED;
-import static com.lavish.android.practice.models.Product.WEIGHT_BASED;
-
 class ProductEditorDialog {
 
     private DialogProductEditBinding b;
@@ -23,12 +20,12 @@ class ProductEditorDialog {
 
 
     void show(final Context context, final Product product, final OnProductEditedListener listener){
+        this.product = product;
 
         //Inflate
         b = DialogProductEditBinding.inflate(
                 LayoutInflater.from(context)
         );
-        this.product = product;
 
         //Create dialog
         new AlertDialog.Builder(context)
@@ -52,6 +49,25 @@ class ProductEditorDialog {
                 .show();
 
         setupRadioGroup();
+        preFillPreviousDetails();
+    }
+
+    private void preFillPreviousDetails() {
+        //Set name
+        b.name.setText(product.name);
+
+        //Change RadioGroup Selected
+        b.productType.check(product.type == Product.WEIGHT_BASED
+                ? R.id.weight_based_rbtn : R.id.variants_based_rbtn);
+
+
+        //Setup views according to type
+        if(product.type == Product.WEIGHT_BASED){
+            b.price.setText(product.pricePerKg + "");
+            b.minQty.setText(product.minQtyToString());
+        } else {
+            b.variants.setText(product.variantsString());
+        }
     }
 
 
@@ -128,6 +144,8 @@ class ProductEditorDialog {
 
     //Change visibility of views based on ProductType Selection
     private void setupRadioGroup() {
+        b.productType.clearCheck();
+
         b.productType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {

@@ -39,6 +39,18 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public String minQtyToString(){
+        //float (2.0) -> String (2kg)
+        //float (0.050) -> String (50g)
+
+        if(minQty < 1){
+            int g = (int) (minQty * 1000);
+            return g + "g";
+        }
+
+        return ((int) minQty) + "kg";
+    }
+
     //Extracts & sets variants from String[]
     public void fromVariantStrings(String[] vs) {
         variants = new ArrayList<>();
