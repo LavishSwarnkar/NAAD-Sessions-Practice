@@ -2,12 +2,16 @@ package com.lavish.android.practice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -37,7 +41,12 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void setupProductsList() {
         //Create DataSet
-        products = new ArrayList<>();
+        products = new ArrayList<>(Arrays.asList(
+                new Product("Apple", 100, 1)
+                , new Product("Orange", 100, 1)
+                , new Product("Grapes", 100, 1)
+                , new Product("Kiwi", 100, 1)
+        ));
 
         //Create adapter object
         adapter = new ProductsAdapter(this, products);
@@ -58,6 +67,30 @@ public class CatalogActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_catalog_options, menu);
+
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
+        //Meta data
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                adapter.filter(query);
+                return true;
+
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i("MyLog", "onQueryTextSubmit : " +  query);
+                return false;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -92,17 +125,19 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void editLastSelectedItem() {
-        //Get data to be edited
-        Product lastSelectedProduct = products.get(adapter.lastSelectedItemPosition);
+        //Get data to be edited                         104
+        //products = allProducts = ["Apple", "Orange", "Grapes", "Kiwi"] //Grapes index = 2
+        //query : "grap"        104
+        //visibleProducts = ["Grapes1"] //Grapes index = 0
+        //104
+
+        Product lastSelectedProduct = adapter.visibleProducts.get(adapter.lastSelectedItemPosition);
 
         //Show Editor Dialog
         new ProductEditorDialog()
                 .show(this, lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
-                        //Replace old Data
-                        products.set(adapter.lastSelectedItemPosition, product);
-
                         //Update view
                         adapter.notifyItemChanged(adapter.lastSelectedItemPosition);
                     }

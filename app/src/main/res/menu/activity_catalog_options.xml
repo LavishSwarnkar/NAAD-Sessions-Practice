@@ -3,8 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/search"
+        android:title="Search"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search"
+        app:iconTint="@color/white"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+
+    <item
         android:id="@+id/add_item"
         android:icon="@drawable/ic_increment"
         android:title="Add new item"
+        app:iconTint="#000"
         app:showAsAction="always" />
+
+
 </menu>

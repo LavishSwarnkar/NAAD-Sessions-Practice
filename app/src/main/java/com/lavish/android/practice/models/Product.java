@@ -39,6 +39,18 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public void initWeightBasedProduct(String name, int pricePerKg, float minQty) {
+        type = WEIGHT_BASED;
+        this.name = name;
+        this.pricePerKg = pricePerKg;
+        this.minQty = minQty;
+    }
+
+    public void initVariantsBasedProduct(String name) {
+        type = VARIANTS_BASED;
+        this.name = name;
+    }
+
     public String minQtyToString(){
         //float (2.0) -> String (2kg)
         //float (0.050) -> String (50g)

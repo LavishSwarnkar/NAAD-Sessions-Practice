@@ -92,7 +92,7 @@ class ProductEditorDialog {
                     return false;
 
                 //All good, set values of product
-                product = new Product(name
+                product.initWeightBasedProduct(name
                         , Integer.parseInt(pricePerKg)
                         , extractMinQtyFromString(minQty));
 
@@ -103,7 +103,7 @@ class ProductEditorDialog {
                 String variants = b.variants.getText().toString().trim();
 
                 //Create product
-                product = new Product(name);
+                product.initVariantsBasedProduct(name);
 
                 return areVariantsValid(variants);
         }

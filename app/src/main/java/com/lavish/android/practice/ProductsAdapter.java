@@ -10,6 +10,7 @@ import com.lavish.android.practice.databinding.VariantBasedProductBinding;
 import com.lavish.android.practice.databinding.WeightBasedProductBinding;
 import com.lavish.android.practice.models.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -25,13 +26,15 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
 
     //List of data
-    private List<Product> productList;
+    public List<Product> visibleProducts
+            , allProducts;
 
     int lastSelectedItemPosition;
 
-    public ProductsAdapter(Context context, List<Product> productList) {
+    public ProductsAdapter(Context context, List<Product> products) {
         this.context = context;
-        this.productList = productList;
+        allProducts = products;
+        this.visibleProducts = new ArrayList<>(products);
     }
 
     //Inflate the view for item and create a ViewHolder object based on viewType
@@ -66,7 +69,7 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //Return ViewType based on position
     @Override
     public int getItemViewType(int position) {
-        return productList.get(position).type;
+        return visibleProducts.get(position).type;
     }
 
 
@@ -75,7 +78,7 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         //Get the data at position
-        final Product product = productList.get(position);
+        final Product product = visibleProducts.get(position);
 
         if(product.type == Product.WEIGHT_BASED){
 
@@ -117,6 +120,20 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+
+    public void filter(String query){
+        query = query.toLowerCase();
+        visibleProducts = new ArrayList<>();
+
+        for(Product product : allProducts){
+            if(product.name.toLowerCase().contains(query))
+                visibleProducts.add(product);
+        }
+
+        notifyDataSetChanged();
+    }
+
+
     private void setupContextMenu(ConstraintLayout root) {
         root.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
@@ -133,7 +150,7 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return productList.size();
+        return visibleProducts.size();
     }
 
 
