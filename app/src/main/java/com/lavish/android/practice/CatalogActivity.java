@@ -21,6 +21,8 @@ import com.lavish.android.practice.models.Product;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
@@ -28,6 +30,7 @@ public class CatalogActivity extends AppCompatActivity {
     private ActivityCatalogBinding b;
     private ArrayList<Product> products;
     private ProductsAdapter adapter;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class CatalogActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.activity_catalog_options, menu);
 
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
 
         //Meta data
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -79,6 +82,7 @@ public class CatalogActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String query) {
+                Log.i("MyLog", "onQueryTextChange : " +  query);
                 adapter.filter(query);
                 return true;
 
@@ -97,12 +101,31 @@ public class CatalogActivity extends AppCompatActivity {
     //OnItem Click Listener for Options Menu
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.add_item){
-            showProductEditorDialog();
-            return true;
+        switch (item.getItemId()){
+            case R.id.add_item :
+                showProductEditorDialog();
+                return true;
+
+            case R.id.sort_list :
+                sortList();
+                return true;
+
         }
 
+
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sortList() {
+        Collections.sort(adapter.visibleProducts, new Comparator<Product>(){
+            @Override
+            public int compare(Product a, Product b) {
+                return a.name.compareTo(b.name);
+            }
+        });
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this, "List sorted!", Toast.LENGTH_SHORT).show();
     }
 
     //OnClick handler for ContextualMenu of Product
@@ -135,7 +158,7 @@ public class CatalogActivity extends AppCompatActivity {
 
         //Show Editor Dialog
         new ProductEditorDialog()
-                .show(this, lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
+                .show(getApplicationContext(), lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
                         //Update view
@@ -155,7 +178,11 @@ public class CatalogActivity extends AppCompatActivity {
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        products.remove(adapter.lastSelectedItemPosition);
+                        Product productToBeRemoved = adapter.visibleProducts.get(adapter.lastSelectedItemPosition);
+
+                        adapter.visibleProducts.remove(productToBeRemoved);
+                        adapter.allProducts.remove(productToBeRemoved);
+
                         adapter.notifyItemRemoved(adapter.lastSelectedItemPosition);
 
                         Toast.makeText(CatalogActivity.this, "Removed", Toast.LENGTH_SHORT).show();
@@ -168,11 +195,16 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void showProductEditorDialog() {
         new ProductEditorDialog()
-                .show(this, new Product(), new ProductEditorDialog.OnProductEditedListener() {
+                .show(getApplicationContext(), new Product(), new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
-                        products.add(product);
-                        adapter.notifyItemInserted(products.size() - 1);
+                        adapter.allProducts.add(product);
+
+                        if(isNameInQuery(product.name)){
+                            adapter.visibleProducts.add(product);
+                            adapter.notifyItemInserted(adapter.visibleProducts.size() - 1);
+                        }
+
                     }
 
                     @Override
@@ -180,5 +212,10 @@ public class CatalogActivity extends AppCompatActivity {
                         Toast.makeText(CatalogActivity.this, "Cancelled!", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private boolean isNameInQuery(String name) {
+        String query = searchView.getQuery().toString().toLowerCase();
+        return name.toLowerCase().contains(query);
     }
 }

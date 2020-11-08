@@ -1,5 +1,5 @@
-# v0.3 Changelog
+# v0.41 Changelog
 
-* Added Contextual Menus for Edit / Remove product
+* Added Search functionality & fixed some interesting bugs
 
 * 
