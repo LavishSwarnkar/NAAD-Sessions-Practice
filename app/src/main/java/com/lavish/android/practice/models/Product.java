@@ -25,8 +25,12 @@ public class Product implements Serializable {
 
     }
 
+    public Product(String name, int pricePerKg, int minQty) {
+        initWeightBasedProduct(name, pricePerKg, minQty);
+    }
+
     //WeightBased
-    public Product(String name, int pricePerKg, float minQty) {
+    public void initWeightBasedProduct(String name, int pricePerKg, float minQty) {
         type = WEIGHT_BASED;
         this.name = name;
         this.pricePerKg = pricePerKg;
@@ -34,7 +38,7 @@ public class Product implements Serializable {
     }
 
     //VariantsBased
-    public Product(String name) {
+    public void initVariantsBasedProduct(String name) {
         type = VARIANTS_BASED;
         this.name = name;
     }

@@ -2,12 +2,17 @@ package com.lavish.android.practice;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SortedList;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -24,6 +29,8 @@ public class CatalogActivity extends AppCompatActivity {
     private ActivityCatalogBinding b;
     private ArrayList<Product> products;
     private ProductsAdapter adapter;
+    private MenuItem searchMenuItem;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +44,12 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void setupProductsList() {
         //Create DataSet
-        products = new ArrayList<>();
+        products = new ArrayList<>(Arrays.asList(
+                new Product("Apple", 100, 1)
+                , new Product("Orange", 100, 1)
+                , new Product("Grapes", 100, 1)
+                , new Product("Kiwi", 100, 1)
+        ));
 
         //Create adapter object
         adapter = new ProductsAdapter(this, products);
@@ -58,6 +70,30 @@ public class CatalogActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_catalog_options, menu);
+
+        //Setup search
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+
+        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                adapter.filter(query);
+                return false;
+            }
+
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -93,15 +129,15 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void editLastSelectedItem() {
         //Get data to be edited
-        Product lastSelectedProduct = products.get(adapter.lastSelectedItemPosition);
+        Product lastSelectedProduct = adapter.visibleProducts.get(adapter.lastSelectedItemPosition);
 
         //Show Editor Dialog
         new ProductEditorDialog()
                 .show(this, lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
-                        //Replace old Data
-                        products.set(adapter.lastSelectedItemPosition, product);
+                        if(!product.name.toLowerCase().contains(getSearchQuery()))
+                            adapter.visibleProducts.remove(adapter.lastSelectedItemPosition);
 
                         //Update view
                         adapter.notifyItemChanged(adapter.lastSelectedItemPosition);
@@ -114,13 +150,21 @@ public class CatalogActivity extends AppCompatActivity {
                 });
     }
 
+    private String getSearchQuery() {
+        return searchView.getQuery().toString().toLowerCase();
+    }
+
     private void removeLastSelectedItem() {
         new AlertDialog.Builder(this)
                 .setTitle("Do you really want to remove this product?")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        products.remove(adapter.lastSelectedItemPosition);
+                        Product productRemoved = adapter.visibleProducts.get(adapter.lastSelectedItemPosition);
+
+                        products.remove(productRemoved);
+                        adapter.visibleProducts.remove(productRemoved);
+                        
                         adapter.notifyItemRemoved(adapter.lastSelectedItemPosition);
 
                         Toast.makeText(CatalogActivity.this, "Removed", Toast.LENGTH_SHORT).show();
@@ -137,7 +181,11 @@ public class CatalogActivity extends AppCompatActivity {
                     @Override
                     public void onProductEdited(Product product) {
                         products.add(product);
-                        adapter.notifyItemInserted(products.size() - 1);
+                        if(!product.name.toLowerCase().contains(getSearchQuery())){
+                            adapter.visibleProducts.add(product);
+                            adapter.notifyItemInserted(adapter.visibleProducts.size() - 1);
+                        }
+
                     }
 
                     @Override
