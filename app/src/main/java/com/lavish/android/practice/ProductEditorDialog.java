@@ -78,7 +78,6 @@ class ProductEditorDialog {
         if(name.isEmpty())
             return false;
 
-        product.name = name;
 
         switch (b.productType.getCheckedRadioButtonId()){
             case R.id.weight_based_rbtn :
@@ -121,7 +120,7 @@ class ProductEditorDialog {
         String[] vs = variants.split("\n");
 
         //Check for each variant format using RegEx
-        Pattern pattern = Pattern.compile("^\\w+(\\s|\\w)+,\\d+$");
+        Pattern pattern = Pattern.compile("^\\w+(\\s|\\w)*,\\s*\\d+$");
         for (String variant : vs)
             if (!pattern.matcher(variant).matches())
                 return false;

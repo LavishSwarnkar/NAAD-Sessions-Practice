@@ -69,7 +69,7 @@ public class Product implements Serializable {
         for(String s : vs){
             //["VarinatName", "30"]
             String[] v = s.split(",");
-            variants.add(new Variant(v[0], Integer.parseInt(v[1])));
+            variants.add(new Variant(v[0], Integer.parseInt(v[1].trim())));
         }
     }
 

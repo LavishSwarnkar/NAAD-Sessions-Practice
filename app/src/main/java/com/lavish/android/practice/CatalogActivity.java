@@ -4,18 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
 import com.lavish.android.practice.models.Product;
 
@@ -27,10 +34,19 @@ import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
 
+    /**
+     * GSON - GoogleJSON
+     * toJson(object) : object -> JSON -> String (save to Prefs)
+     * fromJson(string, Class) : string (JSON) (from Prefs) -> object
+     */
+
+
     private ActivityCatalogBinding b;
     private ArrayList<Product> products;
     private ProductsAdapter adapter;
     private SearchView searchView;
+    public boolean isDragAndDropModeOn;
+    private ItemTouchHelper itemTouchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +55,38 @@ public class CatalogActivity extends AppCompatActivity {
 
         setContentView(b.getRoot());
 
+        loadPreviousData();
         setupProductsList();
+    }
+
+    //Data Save & Reload
+
+    private void saveData() {
+        SharedPreferences preferences = getSharedPreferences("products_data", MODE_PRIVATE);
+        preferences.edit()
+                .putString("data", new Gson().toJson(products))
+                .apply();
+    }
+
+    private void loadPreviousData() {
+        SharedPreferences preferences = getSharedPreferences("products_data", MODE_PRIVATE);
+        String jsonData = preferences.getString("data", null);
+
+        if(jsonData != null)
+            products = new Gson().fromJson(jsonData, new TypeToken<List<Product>>(){}.getType());
+        else
+            products = new ArrayList<>();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        saveData();
     }
 
     private void setupProductsList() {
         //Create DataSet
-        products = new ArrayList<>(Arrays.asList(
-                new Product("Apple", 100, 1)
-                , new Product("Orange", 100, 1)
-                , new Product("Grapes", 100, 1)
-                , new Product("Kiwi", 100, 1)
-        ));
 
         //Create adapter object
         adapter = new ProductsAdapter(this, products);
@@ -60,6 +97,28 @@ public class CatalogActivity extends AppCompatActivity {
         b.recyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         );
+
+        setupDragAndDrop();
+    }
+
+    private void setupDragAndDrop() {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                Collections.swap(adapter.visibleProducts, fromPosition, toPosition);
+                b.recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        };
+
+        itemTouchHelper = new ItemTouchHelper(simpleCallback);
     }
 
 
@@ -103,13 +162,16 @@ public class CatalogActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.add_item :
-                showProductEditorDialog();
+                showDialogForNewProduct();
                 return true;
 
             case R.id.sort_list :
                 sortList();
                 return true;
 
+            case R.id.drag_and_drop :
+                toggleDragAndDropMode(item);
+                return true;
         }
 
 
@@ -117,16 +179,34 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sortList() {
-        Collections.sort(adapter.visibleProducts, new Comparator<Product>(){
-            @Override
-            public int compare(Product a, Product b) {
-                return a.name.compareTo(b.name);
-            }
-        });
-        adapter.notifyDataSetChanged();
-        Toast.makeText(this, "List sorted!", Toast.LENGTH_SHORT).show();
+
+
+    //Drag & Drop
+
+    private void toggleDragAndDropMode(@NonNull MenuItem item) {
+        changeIconBackground(item);
+
+        if(isDragAndDropModeOn)
+            itemTouchHelper.attachToRecyclerView(null);
+        else
+            itemTouchHelper.attachToRecyclerView(b.recyclerView);
+
+        isDragAndDropModeOn = !isDragAndDropModeOn;
     }
+
+    private void changeIconBackground(@NonNull MenuItem item) {
+        Drawable icon = item.getIcon();
+        if(isDragAndDropModeOn){
+            icon.setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.SRC_ATOP);
+        } else {
+            icon.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        }
+        item.setIcon(icon);
+    }
+
+
+
+
 
     //OnClick handler for ContextualMenu of Product
     @Override
@@ -147,6 +227,8 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+    //Callbacks for edit & remove
+
     private void editLastSelectedItem() {
         //Get data to be edited                         104
         //products = allProducts = ["Apple", "Orange", "Grapes", "Kiwi"] //Grapes index = 2
@@ -158,11 +240,15 @@ public class CatalogActivity extends AppCompatActivity {
 
         //Show Editor Dialog
         new ProductEditorDialog()
-                .show(getApplicationContext(), lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
+                .show(this, lastSelectedProduct, new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
                         //Update view
-                        adapter.notifyItemChanged(adapter.lastSelectedItemPosition);
+                        if(!isNameInQuery(product.name)) {
+                            adapter.visibleProducts.remove(product);
+                            adapter.notifyItemRemoved(adapter.lastSelectedItemPosition);
+                        } else
+                            adapter.notifyItemChanged(adapter.lastSelectedItemPosition);
                     }
 
                     @Override
@@ -193,9 +279,11 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
 
-    private void showProductEditorDialog() {
+    //Add new item
+
+    private void showDialogForNewProduct() {
         new ProductEditorDialog()
-                .show(getApplicationContext(), new Product(), new ProductEditorDialog.OnProductEditedListener() {
+                .show(this, new Product(), new ProductEditorDialog.OnProductEditedListener() {
                     @Override
                     public void onProductEdited(Product product) {
                         adapter.allProducts.add(product);
@@ -204,7 +292,6 @@ public class CatalogActivity extends AppCompatActivity {
                             adapter.visibleProducts.add(product);
                             adapter.notifyItemInserted(adapter.visibleProducts.size() - 1);
                         }
-
                     }
 
                     @Override
@@ -212,6 +299,21 @@ public class CatalogActivity extends AppCompatActivity {
                         Toast.makeText(CatalogActivity.this, "Cancelled!", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+
+
+    //Utils
+
+    private void sortList() {
+        Collections.sort(adapter.visibleProducts, new Comparator<Product>(){
+            @Override
+            public int compare(Product a, Product b) {
+                return a.name.compareTo(b.name);
+            }
+        });
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this, "List sorted!", Toast.LENGTH_SHORT).show();
     }
 
     private boolean isNameInQuery(String name) {

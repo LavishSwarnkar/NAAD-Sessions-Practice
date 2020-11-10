@@ -34,7 +34,9 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public ProductsAdapter(Context context, List<Product> products) {
         this.context = context;
         allProducts = products;
-        this.visibleProducts = new ArrayList<>(products);
+
+        //Dynamic (Changes according to search query), so create at a new address. To avoid data loss
+        visibleProducts = new ArrayList<>(products);
     }
 
     //Inflate the view for item and create a ViewHolder object based on viewType
@@ -122,6 +124,7 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     public void filter(String query){
+        //query = ""
         query = query.toLowerCase();
         visibleProducts = new ArrayList<>();
 
@@ -138,11 +141,13 @@ class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         root.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                if(! (context instanceof CatalogActivity))
+                if(!(context instanceof CatalogActivity))
                     return;
 
-                ((CatalogActivity) context)
-                        .getMenuInflater().inflate(R.menu.product_contextual_menu, contextMenu);
+                CatalogActivity activity = ((CatalogActivity) context);
+
+                if(!activity.isDragAndDropModeOn)
+                    activity.getMenuInflater().inflate(R.menu.product_contextual_menu, contextMenu);
             }
         });
     }
