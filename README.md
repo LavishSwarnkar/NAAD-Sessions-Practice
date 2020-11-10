@@ -17,3 +17,9 @@
 * Implement all the above mentioned features in your CartApp
 
 * Configure your weightPicker to take minQty (float) as input and configure the weightPicker accordingly
+
+* Download and explore VFresh apps from [here](https://drive.google.com/drive/folders/1KIdygCt3xtovDCDE9x1ZnjMQibnv-aTK?usp=sharing) 
+
+VFrsh Note : 
+* Beware that changes you make will reflect on everyone's app
+* Ordering will not work
