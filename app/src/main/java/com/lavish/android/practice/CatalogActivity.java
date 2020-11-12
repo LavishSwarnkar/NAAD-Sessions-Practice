@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 
+import com.lavish.android.practice.adapters.ProductsAdapter;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
 import com.lavish.android.practice.models.Product;
 
@@ -36,27 +37,7 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void setupProductsList() {
         //Create DataSet
-        List<Product> products = new ArrayList<>(
-                Arrays.asList(
-                        new Product("Tomato", 20)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                        , new Product("Potato", 30)
-                        , new Product("Apple", 100)
-                )
-        );
+        List<Product> products = getProducts();
 
         //Create adapter object
         ProductsAdapter adapter = new ProductsAdapter(this, products);
@@ -64,6 +45,28 @@ public class CatalogActivity extends AppCompatActivity {
         //Set the adapter & LayoutManager to RV
         b.recyclerView.setAdapter(adapter);
         b.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private List<Product> getProducts() {
+        return Arrays.asList(
+                new Product("Tomato", 20)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+                , new Product("Potato", 30)
+                , new Product("Apple", 100)
+        );
     }
 
 }

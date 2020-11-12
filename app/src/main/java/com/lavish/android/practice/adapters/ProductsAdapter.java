@@ -1,10 +1,9 @@
-package com.lavish.android.practice;
+package com.lavish.android.practice.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lavish.android.practice.databinding.ProductItemBinding;
 import com.lavish.android.practice.models.Product;
@@ -15,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 //Adapter for List of Products
-class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
+public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
 
     //Needed for inflating layout
     private Context context;
@@ -51,20 +50,14 @@ class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
         //Bind the data
         //Name & Price
         holder.b.name.setText(String.format("%s (Rs. %d)", product.name, product.price));
-
-        //Quantity
-        holder.b.quantity.setText(product.qty + "");
-
-        //DecrementButton & Quantity TV Visibility
-        holder.b.decrementBtn.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
-        holder.b.quantity.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
+        updateProductInfo(holder, product);
 
         //Configure buttons
         holder.b.incrementBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 product.qty++;
-                notifyItemChanged(position);
+                updateProductInfo(holder, product);
             }
         });
 
@@ -72,11 +65,19 @@ class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 product.qty--;
-                notifyItemChanged(position);
+                updateProductInfo(holder, product);
             }
         });
     }
 
+    private void updateProductInfo(@NonNull ViewHolder holder, Product product) {
+        //Quantity
+        holder.b.quantity.setText(product.qty + "");
+
+        //DecrementButton & Quantity TV Visibility
+        holder.b.decrementBtn.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
+        holder.b.quantity.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
+    }
 
 
     @Override
