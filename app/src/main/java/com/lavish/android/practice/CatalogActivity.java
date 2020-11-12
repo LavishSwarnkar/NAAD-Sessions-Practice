@@ -7,21 +7,15 @@ import android.os.Bundle;
 
 import com.lavish.android.practice.adapters.ProductsAdapter;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
+import com.lavish.android.practice.models.Cart;
 import com.lavish.android.practice.models.Product;
+import com.lavish.android.practice.models.Variant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
-
-    /**
-     * 1. Create layout for each item
-     * 2. Add RecyclerView to the layout
-     * 3. Create Adapter for RV
-     * 4. Initialize the adapter
-     * 5. Set the adapter to RV
-     */
 
     private ActivityCatalogBinding b;
 
@@ -32,7 +26,19 @@ public class CatalogActivity extends AppCompatActivity {
 
         setContentView(b.getRoot());
 
-        setupProductsList();
+        showVariantPicker();
+        //setupProductsList();
+    }
+
+    private void showVariantPicker() {
+        Product product = new Product("Rice");
+        product.variants = Arrays.asList(
+                new Variant("1kg", 50)
+                , new Variant("5kg", 250)
+        );
+
+        new VariantPickerDialog()
+                .show(this, new Cart(), product, null);
     }
 
     private void setupProductsList() {
