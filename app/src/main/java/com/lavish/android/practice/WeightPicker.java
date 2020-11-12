@@ -6,14 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import com.lavish.android.practice.databinding.WeightPickerDialogBinding;
+import com.lavish.android.practice.models.Cart;
+import com.lavish.android.practice.models.Product;
+
 import androidx.appcompat.app.AlertDialog;
 
 public class WeightPicker {
 
-    public void show(Context context, String minQty, final OnWeightPickedListener listener){
-        WeightPickerDialogBinding b = WeightPickerDialogBinding.inflate(
+    private WeightPickerDialogBinding b;
+    private Cart cart;
+    private Product product;
+
+    public void show(Context context, Cart cart, Product product, final OnWeightPickedListener listener){
+        b = WeightPickerDialogBinding.inflate(
                 LayoutInflater.from(context)
         );
+        this.cart = cart;
+        this.product = product;
 
         new AlertDialog.Builder(context)
                 .setTitle("Pick Weight")
@@ -31,6 +41,7 @@ public class WeightPicker {
                             return;
                         }
 
+                        changeInCart(kg + (g/1000f));
                         listener.onWeightPicked(kg, g);
                     }
                 })
@@ -42,43 +53,47 @@ public class WeightPicker {
                 })
                 .show();
 
-        setupNumberPickers(b.numberPickerKg, b.numberPickerG, minQty);
+        setupNumberPickers();
     }
 
-    private void setupNumberPickers(NumberPicker numberPickerKg, NumberPicker numberPickerG, String minQty) {
+    private void changeInCart(float qty) {
+        cart.updateWeightBasedProductQuantity(product, qty);
+    }
+
+    private void setupNumberPickers() {
         // Define this method to setup kg & g NumberPickers as per the given ranges
         //kg Range - 0kg to 10kg
         //g Range - 0g to 950g
-        Float quantity = Float.parseFloat(minQty) * 1000;
-        numberPickerKg.setMinValue((int) (quantity / 1000));
-        numberPickerKg.setMaxValue(10);
-        numberPickerG.setMinValue(((int) (quantity % 1000)) / 50);
-        numberPickerG.setMaxValue(19);
+        float quantity = product.minQty;
+        b.numberPickerKg.setMinValue((int) (quantity / 1000));
+        b.numberPickerKg.setMaxValue(10);
+        b.numberPickerG.setMinValue(((int) (quantity % 1000)) / 50);
+        b.numberPickerG.setMaxValue(19);
 
-        numberPickerKg.setFormatter(new NumberPicker.Formatter() {
+        b.numberPickerKg.setFormatter(new NumberPicker.Formatter() {
             @Override
             public String format(int value) {
                 return value + " " + "kg";
             }
         });
 
-        numberPickerG.setFormatter(new NumberPicker.Formatter() {
+        b.numberPickerG.setFormatter(new NumberPicker.Formatter() {
             @Override
             public String format(int value) {
                 return (value * 50) + " " + "g";
             }
         });
 
-        View firstItemKg = numberPickerKg.getChildAt(0);
-        if (firstItemKg != null) {
-            firstItemKg.setVisibility(View.INVISIBLE);
-        }
+        updateFirstItemViewInNumberPicker(b.numberPickerKg);
+        updateFirstItemViewInNumberPicker(b.numberPickerG);
 
-        View firstItemG = numberPickerG.getChildAt(0);
-        if (firstItemG != null) {
-            firstItemG.setVisibility(View.INVISIBLE);
-        }
+    }
 
+    private void updateFirstItemViewInNumberPicker(NumberPicker p) {
+        View firstItem = p.getChildAt(0);
+        if (firstItem != null) {
+            firstItem.setVisibility(View.INVISIBLE);
+        }
     }
 
     interface OnWeightPickedListener{

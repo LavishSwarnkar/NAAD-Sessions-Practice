@@ -42,6 +42,8 @@ public class LinearLayoutDemoActivity extends AppCompatActivity {
 
             //Add view to LinearLayout
             b.list.addView(ib.getRoot());
+
+            //OR : VariantItemBinding ib = VariantItemBinding.inflate(getLayoutInflater(), b.list, true);
         }
     }
 }

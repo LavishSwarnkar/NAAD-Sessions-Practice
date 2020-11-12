@@ -10,15 +10,7 @@ public class Cart {
     public Map<String, CartItem> map = new HashMap<>();
     public Map<String, Integer> totalVariantsQtyMap = new HashMap<>();
 
-    /**
-     * totalVariantsQtyMap :
-     * Rice 2
-     * (1kg, 5kg)
-     *
-     * map :
-     * Rice 1kg - 2
-     * Rice 5kg - 0
-     */
+    //Variant based
 
     public int addToCart(Product product, Variant variant){
         //Unique key
@@ -46,7 +38,7 @@ public class Cart {
             totalVariantsQtyMap.put(product.name, 1);
         }
 
-        return map.get(fullName).qty;
+        return (int) map.get(fullName).qty;
     }
 
     public int removeFromCart(Product product, Variant variant){
@@ -57,7 +49,7 @@ public class Cart {
         map.get(fullName).qty--;
 
         //Check for removal
-        int qty = map.get(fullName).qty;
+        int qty = (int) map.get(fullName).qty;
         if(qty == 0)
             map.remove(fullName);
 
@@ -72,4 +64,12 @@ public class Cart {
         return qty;
     }
 
+
+    //Weight based
+
+    public void updateWeightBasedProductQuantity(Product product, float qty) {
+        int price = (int) qty * product.pricePerKg;
+        map.put(product.name
+                , new CartItem(product.name, price, qty));
+    }
 }
