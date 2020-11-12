@@ -48,25 +48,7 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private List<Product> getProducts() {
-        return Arrays.asList(
-                new Product("Tomato", 20)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-                , new Product("Potato", 30)
-                , new Product("Apple", 100)
-        );
+        return new ArrayList<>();
     }
 
 }

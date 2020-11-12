@@ -47,36 +47,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         //Get the data at position
         final Product product = productList.get(position);
 
-        //Bind the data
-        //Name & Price
-        holder.b.name.setText(String.format("%s (Rs. %d)", product.name, product.price));
-        updateProductInfo(holder, product);
 
-        //Configure buttons
-        holder.b.incrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                product.qty++;
-                updateProductInfo(holder, product);
-            }
-        });
-
-        holder.b.decrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                product.qty--;
-                updateProductInfo(holder, product);
-            }
-        });
-    }
-
-    private void updateProductInfo(@NonNull ViewHolder holder, Product product) {
-        //Quantity
-        holder.b.quantity.setText(product.qty + "");
-
-        //DecrementButton & Quantity TV Visibility
-        holder.b.decrementBtn.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
-        holder.b.quantity.setVisibility(product.qty > 0 ? View.VISIBLE : View.GONE);
     }
 
 
