@@ -40,7 +40,7 @@ To create Cart class for saving items to be ordered
 
 Eg -
 
-```json
+```
 "Apple" : {
     pricePerKg = 20
     , minQty = 2
@@ -66,7 +66,7 @@ Eg -
 
 Instead of sending all this information including overhead, we can save bandwidth & storage by sending only relevant information like
 
-```json
+```
 "Apple" : {
     qty = 3
     , price = 60
@@ -97,7 +97,8 @@ Along with List< CartItem >, we need a class to save additional information like
 - Total no of items in cart (int)
 
 These additional details will be shown as follows :
-<img title="" src="need for cart class.jpeg" alt="need for cart class.jpeg" width="319" data-align="center">
+
+<img title="" src="https://github.com/lswarnkar1/NAAD-Sessions-Practice/blob/ecom_user_0.2/images/need%20for%20cart%20class.jpeg?raw=true" alt="need for cart class.jpeg" width="319" data-align="center">
 
 ---
 
@@ -107,7 +108,7 @@ When user updates qty, instead of linear search in list, we need a faster mechan
 
 Eg. (In our previous case) -
 
-```json
+```
 //Weight based, only Product name is enough
 "Apple" : {
     qty = 3
@@ -137,11 +138,11 @@ Eg. (In our previous case) -
 
 - But we also need to show total Qty of a VB Product (Value in Yellow)
 
-<img title="" src="need for totalQty map.jpeg" alt="need for totalQty map.jpeg" width="237">  <img title="" src="need for totalQty map (zoomed in).jpeg" alt="need for totalQty map (zoomed in).jpeg" width="302">
+<img title="" src="https://github.com/lswarnkar1/NAAD-Sessions-Practice/blob/ecom_user_0.2/images/need%20for%20totalQty%20map.jpeg?raw=true" alt="need for totalQty map.jpeg" width="237">  <img title="" src="https://github.com/lswarnkar1/NAAD-Sessions-Practice/blob/ecom_user_0.2/images/need%20for%20totalQty%20map%20(zoomed%20in).jpeg?raw=true" alt="need for totalQty map (zoomed in).jpeg" width="302">
 
 To do so, we need an additional Map< String, Integer > to save totalQty of a VB Product like
 
-```json
+```
 "Aashirvaad Aata" : 3
 , "Bread" : 5
 ```
@@ -180,7 +181,7 @@ void updateWBPQuantity(Product product, float qty)
 
 Eg -
 
-```json
+```
 null -> "1kg"
 "1kg" -> "2kg 500g"
 ```
