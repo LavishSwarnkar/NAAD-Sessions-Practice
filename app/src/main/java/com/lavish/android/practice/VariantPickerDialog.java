@@ -2,13 +2,13 @@ package com.lavish.android.practice;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.lavish.android.practice.databinding.DialogVariantPickerBinding;
 import com.lavish.android.practice.databinding.VariantItemBinding;
 import com.lavish.android.practice.models.Cart;
-import com.lavish.android.practice.models.CartItem;
 import com.lavish.android.practice.models.Product;
 import com.lavish.android.practice.models.Variant;
 
@@ -19,7 +19,7 @@ class VariantPickerDialog {
     private Product product;
     private DialogVariantPickerBinding b;
 
-    public void show(Context context, Cart cart, Product product, final OnWeightPickedListener listener){
+    public void show(Context context, Cart cart, Product product, final OnVariantPickedListener listener){
         this.context = context;
         this.cart = cart;
         this.product = product;
@@ -31,7 +31,18 @@ class VariantPickerDialog {
         new AlertDialog.Builder(context)
                 .setTitle("Pick Variants")
                 .setView(b.getRoot())
-                .setPositiveButton("SELECT", null)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //TODO : return totalQty via listener
+                    }
+                })
+                .setPositiveButton("REMOVE ALL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //TODO : remove all variants from cart
+                    }
+                })
                 .show();
 
         showVariants();
@@ -41,8 +52,8 @@ class VariantPickerDialog {
         for(Variant variant : product.variants){
             //Inflate
             VariantItemBinding ib = VariantItemBinding.inflate(
-                    /* Inflater */ LayoutInflater.from(context)
-                    ,/* Parent */ b.getRoot()
+                     /* Inflater */ LayoutInflater.from(context)
+                    ,/*  Parent  */ b.getRoot()
                     , true
             );
 
@@ -87,9 +98,9 @@ class VariantPickerDialog {
         });
     }
 
-    interface OnWeightPickedListener{
-        void onWeightPicked();
-        void onWeightPickerCancelled();
+    interface OnVariantPickedListener {
+        void onQtyUpdated(int qty);
+        void onRemoved();
     }
 
 }

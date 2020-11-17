@@ -6,70 +6,125 @@ import java.util.Map;
 
 public class Cart {
 
-    //String - NameOfCartItem
+    //Map to save all cartItems
     public Map<String, CartItem> map = new HashMap<>();
+
+    //Map to save VB Product's total Qty
     public Map<String, Integer> totalVariantsQtyMap = new HashMap<>();
+
+    public int noOfItems, subTotal;
 
     //Variant based
 
+    /** Method to add a VB Product to Cart
+     *
+     * @param product Product to be added
+     * @param variant Product's Variant to be added
+     * @return Updated Qty of Variant
+     */
     public int addToCart(Product product, Variant variant){
         //Unique key
-        String fullName = product.name + " " + variant.name;
+        String key = product.name + " " + variant.name;
 
-        //Update qty
-        if(map.containsKey(fullName)){
-
-            //Item already exists
-            map.get(fullName).qty++;
-
+        //Update map
+        if(map.containsKey(key)){
+            //Update in map
+            map.get(key).qty++;
         } else {
-
-            //Add item to cart
-            map.put(fullName
-                    , new CartItem(fullName, variant.price));
+            //Put in map
+            map.put(key, new CartItem(key, variant.price));
         }
 
-        //Update totalQty
+        //Update summary
+        noOfItems++;
+        subTotal += variant.price;
+
+        //Update total VBP Qty
         if(totalVariantsQtyMap.containsKey(product.name)){
-            int totalQty = totalVariantsQtyMap.get(product.name);
-            totalQty++;
-            totalVariantsQtyMap.put(product.name, totalQty);
+            int qty = totalVariantsQtyMap.get(product.name) + 1;
+            totalVariantsQtyMap.put(product.name, qty);
         } else {
             totalVariantsQtyMap.put(product.name, 1);
         }
 
-        return (int) map.get(fullName).qty;
+        return (int) map.get(key).qty;
     }
 
+    /** Method to remove a VB Product from Cart
+     *
+     * @param product Product to be removed
+     * @param variant Product's Variant to be removed
+     * @return Updated Qty of Variant
+     */
     public int removeFromCart(Product product, Variant variant){
         //Unique key
-        String fullName = product.name + " " + variant.name;
+        String key = product.name + " " + variant.name;
 
-        //Update qty
-        map.get(fullName).qty--;
+        //Update qty in map
+        map.get(key).qty--;
 
-        //Check for removal
-        int qty = (int) map.get(fullName).qty;
-        if(qty == 0)
-            map.remove(fullName);
+        //Check for complete removal
+        if(map.get(key).qty == 0)
+            map.remove(key);
 
-        //Update totalQty
-        int totalQty = totalVariantsQtyMap.get(product.name);
-        totalQty--;
-        if(totalQty == 0)
-            totalVariantsQtyMap.remove(product.name);
-        else
-            totalVariantsQtyMap.put(product.name, totalQty);
+        //Update summary
+        noOfItems--;
+        subTotal -= variant.price;
 
-        return qty;
+        //Update totalQty map
+        int qty = totalVariantsQtyMap.get(product.name) - 1;
+        totalVariantsQtyMap.put(product.name, qty);
+
+        //Check for complete removal
+        if(totalVariantsQtyMap.get(product.name) == 0)
+            map.remove(key);
+
+        return map.containsKey(key) ? (int) map.get(key).qty : 0;
     }
 
+    public void removeAllVariantsFromCart(Product product){
+        for(Variant variant : product.variants){
+            String key = product.name + " " + variant.name;
+
+            if(map.containsKey(key)){
+                subTotal -= map.get(key).price;
+                noOfItems -= map.get(key).qty;
+            }
+        }
+
+        if(totalVariantsQtyMap.containsKey(product.name))
+            totalVariantsQtyMap.remove(product.name);
+    }
 
     //Weight based
 
-    public void updateWeightBasedProductQuantity(Product product, float qty) {
-        int price = (int) qty * product.pricePerKg;
-        map.put(product.name
-                , new CartItem(product.name, price, qty));
+    /** Method to update a WB Product to Cart
+     *
+     * @param product Product to be updated
+     * @param qty Quantity of product
+     */
+    public void updateWBPQuantity(Product product, float qty) {
+        //Calculate newPrice
+        int newPrice = (int) (product.pricePerKg * qty);
+
+        //Decrement previous price
+        if(map.containsKey(product.name))
+            subTotal -= map.get(product.name).price;
+        //Added for the first time, so increment noOfItems
+        else
+            noOfItems++;
+
+        //Overwrite previous info OR put new info
+        map.put(product.name, new CartItem(product.name, newPrice, qty));
+        subTotal += newPrice;
+    }
+
+    public void removeWBPFromCart(Product product) {
+        if(map.containsKey(product.name)){
+            subTotal -= map.get(product.name).price;
+            noOfItems--;
+
+            map.remove(product.name);
+        }
     }
 }

@@ -12,13 +12,13 @@ import com.lavish.android.practice.models.Product;
 
 import androidx.appcompat.app.AlertDialog;
 
-public class WeightPicker {
+public class WeightPickerDialog {
 
     private WeightPickerDialogBinding b;
     private Cart cart;
     private Product product;
 
-    public void show(Context context, Cart cart, Product product, final OnWeightPickedListener listener){
+    public void show(Context context, final Cart cart, final Product product, final OnWeightPickedListener listener){
         b = WeightPickerDialogBinding.inflate(
                 LayoutInflater.from(context)
         );
@@ -31,24 +31,25 @@ public class WeightPicker {
                 .setPositiveButton("SELECT", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        // Replace 0s & assign kg & g values from respective NumberPickers
-//                        int kg = 0, g = 0;
+
                         int kg = b.numberPickerKg.getValue();
                         int g = b.numberPickerG.getValue();
 
-                        // Add GuardCode to prevent user from selecting 0kg 0g. If so, then return
-                        if(kg == 0 && g == 0) {
+                        //GuardCode to prevent user from selecting 0kg 0g
+                        if(kg == 0 && g == 0)
                             return;
-                        }
 
                         changeInCart(kg + (g/1000f));
                         listener.onWeightPicked(kg, g);
                     }
                 })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                .setNegativeButton("REMOVE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.onWeightPickerCancelled();
+
+                        //TODO : Remove WB Product
+                        cart.removeWBPFromCart(product);
+                        listener.onRemoved();
                     }
                 })
                 .show();
@@ -57,7 +58,7 @@ public class WeightPicker {
     }
 
     private void changeInCart(float qty) {
-        cart.updateWeightBasedProductQuantity(product, qty);
+        cart.updateWBPQuantity(product, qty);
     }
 
     private void setupNumberPickers() {
@@ -98,7 +99,7 @@ public class WeightPicker {
 
     interface OnWeightPickedListener{
         void onWeightPicked(int kg, int g);
-        void onWeightPickerCancelled();
+        void onRemoved();
     }
 
 }
