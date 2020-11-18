@@ -1,9 +1,11 @@
 package com.lavish.android.practice;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.lavish.android.practice.adapters.ProductsAdapter;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
@@ -18,6 +20,7 @@ import java.util.List;
 public class CatalogActivity extends AppCompatActivity {
 
     private ActivityCatalogBinding b;
+    private Cart cart = new Cart();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +38,16 @@ public class CatalogActivity extends AppCompatActivity {
         List<Product> products = getProducts();
 
         //Create adapter object
-        ProductsAdapter adapter = new ProductsAdapter(this, products);
+        ProductsAdapter adapter = new ProductsAdapter(this, products, cart);
 
         //Set the adapter & LayoutManager to RV
-        b.recyclerView.setAdapter(adapter);
         b.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //Divider
+        DividerItemDecoration itemDecor = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        b.recyclerView.addItemDecoration(itemDecor);
+
+        b.recyclerView.setAdapter(adapter);
     }
 
     private List<Product> getProducts() {
@@ -54,6 +62,16 @@ public class CatalogActivity extends AppCompatActivity {
                         new Variant("1kg", 100)
                 ))
         );
+    }
+
+    public void updateCartSummary(){
+        if(cart.noOfItems == 0){
+            b.checkout.setVisibility(View.GONE);
+        } else {
+            b.checkout.setVisibility(View.VISIBLE);
+
+            b.cartSummary.setText("Total : Rs. " + cart.subTotal + "\n" + cart.noOfItems + " items");
+        }
     }
 
 }

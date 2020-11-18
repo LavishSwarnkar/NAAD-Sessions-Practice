@@ -95,8 +95,14 @@ public class Product implements Serializable {
         return variantsString
                 .replaceFirst("\\[", "")
                 .replaceFirst("]", "")
-                .replaceAll(",", "\n");
+                .replaceAll(",", ", ");
     }
 
+    public String priceString(){
+        if(type == Product.WEIGHT_BASED)
+            return "Rs. " + pricePerKg + "/kg";
+
+        return variantsString();
+    }
 
 }

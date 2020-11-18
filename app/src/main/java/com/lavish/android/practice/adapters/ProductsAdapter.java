@@ -4,9 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.lavish.android.practice.controllers.MultipleVBProductAndWBViewBinder;
+import com.lavish.android.practice.controllers.SingleVBProductViewBinder;
 import com.lavish.android.practice.databinding.ProductItemBinding;
 import com.lavish.android.practice.databinding.ProductItemSingleVbBinding;
 import com.lavish.android.practice.databinding.ProductItemWbMultiVbBinding;
+import com.lavish.android.practice.models.Cart;
 import com.lavish.android.practice.models.Product;
 import com.lavish.android.practice.models.Variant;
 
@@ -27,9 +30,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     //List of data
     private List<Product> productList;
 
-    public ProductsAdapter(Context context, List<Product> productList) {
+    private Cart cart;
+
+    public ProductsAdapter(Context context, List<Product> productList, Cart cart) {
         this.context = context;
         this.productList = productList;
+        this.cart = cart;
     }
 
     @Override
@@ -73,27 +79,27 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final Product product = productList.get(position);
 
         if(getItemViewType(position) == TYPE_SINGLE_VB){
+
             SingleVbVH vh = (SingleVbVH) holder;
 
             vh.b.name.setText(product.name + " " + product.variants.get(0).name);
-            vh.b.price.setText(getPriceText(product));
+            vh.b.price.setText(product.priceString());
+
+            //Bind buttons
+            new SingleVBProductViewBinder()
+                    .bind(vh.b, product, cart);
         } else {
 
             MultipleVbOrWbVH vh = (MultipleVbOrWbVH) holder;
+
             vh.b.name.setText(product.name);
-            vh.b.price.setText(getPriceText(product));
+            vh.b.price.setText(product.priceString());
+
+            //Bind buttons
+            new MultipleVBProductAndWBViewBinder()
+                    .bind(vh.b, product, cart);
         }
 
-    }
-
-    private String getPriceText(Product product) {
-        if(product.type == Product.WEIGHT_BASED)
-            return "Rs. " + product.pricePerKg + "/kg";
-
-        return product.variants.toString()
-                .replace("[", "")
-                .replaceAll("]", "")
-                .replace(",", ", ");
     }
 
 
