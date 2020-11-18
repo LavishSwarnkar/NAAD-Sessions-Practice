@@ -26,19 +26,8 @@ public class CatalogActivity extends AppCompatActivity {
 
         setContentView(b.getRoot());
 
-        showVariantPicker();
-        //setupProductsList();
-    }
 
-    private void showVariantPicker() {
-        Product product = new Product("Rice");
-        product.variants = Arrays.asList(
-                new Variant("1kg", 50)
-                , new Variant("5kg", 250)
-        );
-
-        new VariantPickerDialog()
-                .show(this, new Cart(), product, null);
+        setupProductsList();
     }
 
     private void setupProductsList() {
@@ -54,7 +43,17 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private List<Product> getProducts() {
-        return new ArrayList<>();
+        return Arrays.asList(
+                new Product("Bread", Arrays.asList(
+                        new Variant("big", 10)
+                        , new Variant("small", 20)
+                        , new Variant("medium", 30)
+                ))
+                , new Product("Apple", 30, 1)
+                , new Product("Kiwi", Arrays.asList(
+                        new Variant("1kg", 100)
+                ))
+        );
     }
 
 }

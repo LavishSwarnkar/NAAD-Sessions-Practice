@@ -12,6 +12,6 @@ public class Variant {
 
     @Override
     public String toString() {
-        return name + " - Rs. " + price;
+        return "Rs. " + price;
     }
 }

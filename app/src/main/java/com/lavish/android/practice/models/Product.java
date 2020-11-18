@@ -39,6 +39,12 @@ public class Product implements Serializable {
         this.name = name;
     }
 
+    public Product(String name, List<Variant> variants) {
+        type = VARIANTS_BASED;
+        this.name = name;
+        this.variants = variants;
+    }
+
     public void initWeightBasedProduct(String name, int pricePerKg, float minQty) {
         type = WEIGHT_BASED;
         this.name = name;
@@ -91,4 +97,6 @@ public class Product implements Serializable {
                 .replaceFirst("]", "")
                 .replaceAll(",", "\n");
     }
+
+
 }

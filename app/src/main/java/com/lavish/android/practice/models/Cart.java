@@ -14,6 +14,8 @@ public class Cart {
 
     public int noOfItems, subTotal;
 
+
+
     //Variant based
 
     /** Method to add a VB Product to Cart
@@ -28,8 +30,10 @@ public class Cart {
 
         //Update map
         if(map.containsKey(key)){
-            //Update in map
-            map.get(key).qty++;
+            //Update qty & price in map
+            CartItem existingCartItem = map.get(key);
+            existingCartItem.qty++;
+            existingCartItem.price += variant.price;
         } else {
             //Put in map
             map.put(key, new CartItem(key, variant.price));
@@ -60,8 +64,11 @@ public class Cart {
         //Unique key
         String key = product.name + " " + variant.name;
 
-        //Update qty in map
-        map.get(key).qty--;
+        //Update qty & price in map
+        CartItem existingCartItem = map.get(key);
+        existingCartItem.qty--;
+        existingCartItem.price -= variant.price;
+
 
         //Check for complete removal
         if(map.get(key).qty == 0)
@@ -77,7 +84,7 @@ public class Cart {
 
         //Check for complete removal
         if(totalVariantsQtyMap.get(product.name) == 0)
-            map.remove(key);
+            totalVariantsQtyMap.remove(key);
 
         return map.containsKey(key) ? (int) map.get(key).qty : 0;
     }
@@ -89,6 +96,8 @@ public class Cart {
             if(map.containsKey(key)){
                 subTotal -= map.get(key).price;
                 noOfItems -= map.get(key).qty;
+
+                map.remove(key);
             }
         }
 
