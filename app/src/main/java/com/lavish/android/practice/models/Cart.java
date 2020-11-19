@@ -105,6 +105,15 @@ public class Cart {
             totalVariantsQtyMap.remove(product.name);
     }
 
+    public int getVariantQty(Product product, Variant variant){
+        String key = product.name + " " + variant.name;
+
+        if(map.containsKey(key))
+            return (int) map.get(key).qty;
+
+        return 0;
+    }
+
     //Weight based
 
     /** Method to update a WB Product to Cart

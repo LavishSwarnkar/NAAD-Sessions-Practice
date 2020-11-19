@@ -10,6 +10,10 @@ public class Variant {
         this.price = price;
     }
 
+    public String nameAndPriceString() {
+        return name + " - Rs. " + price;
+    }
+
     @Override
     public String toString() {
         return "Rs. " + price;

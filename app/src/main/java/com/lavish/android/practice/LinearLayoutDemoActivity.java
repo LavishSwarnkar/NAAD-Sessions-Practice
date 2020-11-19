@@ -38,7 +38,7 @@ public class LinearLayoutDemoActivity extends AppCompatActivity {
             VariantItemBinding ib = VariantItemBinding.inflate(getLayoutInflater());
 
             //Bind data to view
-            ib.variantName.setText(variant.toString());
+            ib.variantName.setText(variant.nameAndPriceString());
 
             //Add view to LinearLayout
             b.list.addView(ib.getRoot());

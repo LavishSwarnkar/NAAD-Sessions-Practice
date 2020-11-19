@@ -1,4 +1,4 @@
-package com.lavish.android.practice;
+package com.lavish.android.practice.dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,14 +26,14 @@ public class WeightPickerDialog {
         this.product = product;
 
         new AlertDialog.Builder(context)
-                .setTitle("Pick Weight")
+                .setTitle(product.name)
                 .setView(b.getRoot())
                 .setPositiveButton("SELECT", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         int kg = b.numberPickerKg.getValue();
-                        int g = b.numberPickerG.getValue();
+                        int g = b.numberPickerG.getValue() * 50;
 
                         //GuardCode to prevent user from selecting 0kg 0g
                         if(kg == 0 && g == 0)
@@ -47,7 +47,6 @@ public class WeightPickerDialog {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        //TODO : Remove WB Product
                         cart.removeWBPFromCart(product);
                         listener.onRemoved();
                     }
@@ -55,6 +54,16 @@ public class WeightPickerDialog {
                 .show();
 
         setupNumberPickers();
+        showPreviouslySelectedQty();
+    }
+
+    private void showPreviouslySelectedQty() {
+        if(cart.map.containsKey(product.name)){
+            float qty = cart.map.get(product.name).qty;
+
+            b.numberPickerKg.setValue((int) qty);
+            b.numberPickerG.setValue((int) (qty - (int) qty) * 1000 / 50);
+        }
     }
 
     private void changeInCart(float qty) {
@@ -66,7 +75,7 @@ public class WeightPickerDialog {
         //kg Range - 0kg to 10kg
         //g Range - 0g to 950g
         float quantity = product.minQty;
-        b.numberPickerKg.setMinValue((int) (quantity / 1000));
+        b.numberPickerKg.setMinValue((int) (quantity));
         b.numberPickerKg.setMaxValue(10);
         b.numberPickerG.setMinValue(((int) (quantity % 1000)) / 50);
         b.numberPickerG.setMaxValue(19);
@@ -97,7 +106,7 @@ public class WeightPickerDialog {
         }
     }
 
-    interface OnWeightPickedListener{
+    public interface OnWeightPickedListener{
         void onWeightPicked(int kg, int g);
         void onRemoved();
     }

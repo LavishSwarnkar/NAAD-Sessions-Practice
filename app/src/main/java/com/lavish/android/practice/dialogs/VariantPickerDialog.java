@@ -1,4 +1,4 @@
-package com.lavish.android.practice;
+package com.lavish.android.practice.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,14 +12,14 @@ import com.lavish.android.practice.models.Cart;
 import com.lavish.android.practice.models.Product;
 import com.lavish.android.practice.models.Variant;
 
-class VariantPickerDialog {
+public class VariantPickerDialog {
 
     private Context context;
     private Cart cart;
     private Product product;
     private DialogVariantPickerBinding b;
 
-    public void show(Context context, Cart cart, Product product, final OnVariantPickedListener listener){
+    public void show(Context context, final Cart cart, final Product product, final OnVariantPickedListener listener){
         this.context = context;
         this.cart = cart;
         this.product = product;
@@ -29,18 +29,24 @@ class VariantPickerDialog {
         );
 
         new AlertDialog.Builder(context)
-                .setTitle("Pick Variants")
+                .setTitle(product.name)
+                .setCancelable(false)
                 .setView(b.getRoot())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO : return totalQty via listener
+                        int qty = cart.totalVariantsQtyMap.get(product.name);
+                        if(qty > 0)
+                            listener.onQtyUpdated(qty);
+                        else
+                            listener.onRemoved();
                     }
                 })
-                .setPositiveButton("REMOVE ALL", new DialogInterface.OnClickListener() {
+                .setNegativeButton("REMOVE ALL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO : remove all variants from cart
+                        cart.removeAllVariantsFromCart(product);
+                        listener.onRemoved();
                     }
                 })
                 .show();
@@ -58,9 +64,20 @@ class VariantPickerDialog {
             );
 
             //Bind data
-            ib.variantName.setText(variant.toString());
+            ib.variantName.setText(variant.nameAndPriceString());
 
+            showPreviousQty(variant, ib);
             setupButtons(variant, ib);
+        }
+    }
+
+    private void showPreviousQty(Variant variant, VariantItemBinding ib) {
+        int qty = cart.getVariantQty(product, variant);
+        if(qty > 0){
+            ib.remove.setVisibility(View.VISIBLE);
+            ib.qty.setVisibility(View.VISIBLE);
+
+            ib.qty.setText(qty + "");
         }
     }
 
@@ -98,7 +115,7 @@ class VariantPickerDialog {
         });
     }
 
-    interface OnVariantPickedListener {
+    public interface OnVariantPickedListener {
         void onQtyUpdated(int qty);
         void onRemoved();
     }

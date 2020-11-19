@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 
@@ -31,6 +32,19 @@ public class CatalogActivity extends AppCompatActivity {
 
 
         setupProductsList();
+        setupCheckout();
+    }
+
+    private void setupCheckout() {
+        b.checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(CatalogActivity.this)
+                        .setTitle("Cart Summary")
+                        .setMessage(cart.map.toString())
+                        .show();
+            }
+        });
     }
 
     private void setupProductsList() {
@@ -57,7 +71,7 @@ public class CatalogActivity extends AppCompatActivity {
                         , new Variant("small", 20)
                         , new Variant("medium", 30)
                 ))
-                , new Product("Apple", 30, 1)
+                , new Product("Apple", 30, 2)
                 , new Product("Kiwi", Arrays.asList(
                         new Variant("1kg", 100)
                 ))
