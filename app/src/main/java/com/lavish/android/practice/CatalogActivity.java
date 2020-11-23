@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lavish.android.practice.adapters.ProductsAdapter;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
 import com.lavish.android.practice.models.Cart;
@@ -29,7 +30,6 @@ public class CatalogActivity extends AppCompatActivity {
         b = ActivityCatalogBinding.inflate(getLayoutInflater());
 
         setContentView(b.getRoot());
-
 
         setupProductsList();
         setupCheckout();

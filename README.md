@@ -1,11 +1,25 @@
-# Objective
-
-To bind buttons of Multiple Variant Product & Weight based product.
-
 # Task
 
-* Create the class MultipleVBProductAndWBViewBinder and add code for binding buttons
+Learn and DIY :
 
-# APK
+* [Delete data from Cloud Firestore](https://firebase.google.com/docs/firestore/manage-data/delete-data)
 
-Download APK [here](https://github.com/lswarnkar1/NAAD-Sessions-Practice/raw/ecom_admin_0.4/app/build/outputs/apk/debug/app-debug.apk)
+* [WriteBatch & Transactions](https://firebase.google.com/docs/firestore/manage-data/transactions)
+
+* [Perform simple and compound queries in Cloud Firestore](https://firebase.google.com/docs/firestore/query-data/queries)
+
+* [Order and limit data with Cloud Firestore](https://firebase.google.com/docs/firestore/query-data/order-limit-data)
+
+* [Get realtime updates with Cloud Firestore](https://firebase.google.com/docs/firestore/query-data/listen)
+
+* [Paginate data with query cursors](https://firebase.google.com/docs/firestore/query-data/query-cursors)
+
+
+
+Do the above in Firebase project, Push the code on GitHub and acknowledge.
+
+
+
+Optional read :
+
+* [Transaction serializability and isolation](https://firebase.google.com/docs/firestore/transaction-data-contention)
