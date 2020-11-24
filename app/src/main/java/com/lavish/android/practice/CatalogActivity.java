@@ -21,6 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
@@ -30,14 +33,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CatalogActivity extends AppCompatActivity {
 
     /**
-     * GSON - GoogleJSON
-     * toJson(object) : object -> JSON -> String (save to Prefs)
-     * fromJson(string, Class) : string (JSON) (from Prefs) -> object
+     * Saving products to Firebase
+     *
+     * Approach 1 : Save each product in separate doc
+     * Approach 2 : Save all products in a single doc
+     *
+     * Constraints : 1000 Products & 2000 users
+     * 50k reads / day (12AM : 12:30PM)
+     * Adm
+     * Approach 1 : 1000 * 1000 * 2 = 2M reads (Without pagination)
+     *              5 * 2000 * 2 = 20k reads (With pagination)
+     *
+     * Approach 2 : 1 * 1000 * 2 = 2k reads
+     * Cost : Network egross/BW (10GB / month = 340MB/day)
+     * 258KB * 2k = 503MB
+     *
      */
 
 
@@ -47,6 +64,7 @@ public class CatalogActivity extends AppCompatActivity {
     private SearchView searchView;
     public boolean isDragAndDropModeOn;
     private ItemTouchHelper itemTouchHelper;
+    private MyApp app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +73,62 @@ public class CatalogActivity extends AppCompatActivity {
 
         setContentView(b.getRoot());
 
+        /**
+         * index : 1 doc (1KB)
+         * tree.db (512B)
+         *
+         * A 20
+         * Ad 10
+         * Adm 4
+         * 34 -> 9
+         */
+
+        setup();
         loadPreviousData();
         setupProductsList();
+    }
+
+    private void setup() {
+        app = (MyApp) getApplicationContext();
     }
 
     //Data Save & Reload
 
     private void saveData() {
+        if(app.isOffline()){
+            app.showToast(this, "Unable to save. You are offline!");
+            return;
+        }
+
+        app.showLoadingDialog(this);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("products", products);
+
+        //Save on cloud
+        app.db.collection("inventory")
+                .document("products")
+                .set(map)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(CatalogActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
+                        saveLocally();
+
+                        app.hideLoadingDialog();
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CatalogActivity.this, "Failed to save on cloud", Toast.LENGTH_SHORT).show();
+                        app.hideLoadingDialog();
+                    }
+                });
+    }
+
+    private void saveLocally() {
         SharedPreferences preferences = getSharedPreferences("products_data", MODE_PRIVATE);
         preferences.edit()
                 .putString("data", new Gson().toJson(products))
@@ -79,9 +146,7 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+    public void onBackPressed() {
         saveData();
     }
 
