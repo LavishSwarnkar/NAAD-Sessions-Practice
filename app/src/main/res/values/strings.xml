@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Practice</string>
+    <string name="app_name">Ecom Admin</string>
     <string name="title_activity_main3">RecyclerView Demo</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
