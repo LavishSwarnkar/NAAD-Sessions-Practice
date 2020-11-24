@@ -1,4 +1,4 @@
-package com.lavish.android.practice;
+package com.lavish.android.userecom;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -8,13 +8,12 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 
-import com.lavish.android.practice.adapters.ProductsAdapter;
-import com.lavish.android.practice.databinding.ActivityCatalogBinding;
-import com.lavish.android.practice.models.Cart;
-import com.lavish.android.practice.models.Product;
-import com.lavish.android.practice.models.Variant;
+import com.lavish.android.userecom.adapters.ProductsAdapter;
+import com.lavish.android.userecom.databinding.ActivityCatalogBinding;
+import com.lavish.android.userecom.models.Cart;
+import com.lavish.android.userecom.models.Product;
+import com.lavish.android.userecom.models.Variant;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

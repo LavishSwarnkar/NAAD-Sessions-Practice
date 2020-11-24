@@ -1,12 +1,12 @@
-package com.lavish.android.practice;
+package com.lavish.android.userecom;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.lavish.android.practice.databinding.ActivityLinearLayoutDemoBinding;
-import com.lavish.android.practice.databinding.VariantItemBinding;
-import com.lavish.android.practice.models.Variant;
+import com.lavish.android.userecom.databinding.ActivityLinearLayoutDemoBinding;
+import com.lavish.android.userecom.databinding.VariantItemBinding;
+import com.lavish.android.userecom.models.Variant;
 
 import java.util.Arrays;
 import java.util.List;

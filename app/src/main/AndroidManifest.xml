@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lavish.android.practice">
+    package="com.lavish.android.userecom">
 
     <application
         android:allowBackup="true"
@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LinearLayoutDemoActivity">
+        <activity android:name="com.lavish.android.userecom.LinearLayoutDemoActivity">
 
         </activity>
-        <activity android:name=".CatalogActivity">
+        <activity android:name="com.lavish.android.userecom.CatalogActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

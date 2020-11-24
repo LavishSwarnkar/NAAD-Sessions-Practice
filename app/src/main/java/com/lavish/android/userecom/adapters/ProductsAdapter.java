@@ -1,17 +1,16 @@
-package com.lavish.android.practice.adapters;
+package com.lavish.android.userecom.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.lavish.android.practice.controllers.MultipleVBProductAndWBViewBinder;
-import com.lavish.android.practice.controllers.SingleVBProductViewBinder;
-import com.lavish.android.practice.databinding.ProductItemBinding;
-import com.lavish.android.practice.databinding.ProductItemSingleVbBinding;
-import com.lavish.android.practice.databinding.ProductItemWbMultiVbBinding;
-import com.lavish.android.practice.models.Cart;
-import com.lavish.android.practice.models.Product;
-import com.lavish.android.practice.models.Variant;
+import com.lavish.android.userecom.controllers.MultipleVBProductAndWBViewBinder;
+import com.lavish.android.userecom.controllers.SingleVBProductViewBinder;
+import com.lavish.android.userecom.databinding.ProductItemBinding;
+import com.lavish.android.userecom.databinding.ProductItemSingleVbBinding;
+import com.lavish.android.userecom.databinding.ProductItemWbMultiVbBinding;
+import com.lavish.android.userecom.models.Cart;
+import com.lavish.android.userecom.models.Product;
 
 import java.util.List;
 

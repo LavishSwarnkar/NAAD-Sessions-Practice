@@ -1,13 +1,13 @@
-package com.lavish.android.practice.controllers;
+package com.lavish.android.userecom.controllers;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
-import com.lavish.android.practice.CatalogActivity;
-import com.lavish.android.practice.databinding.ProductItemSingleVbBinding;
-import com.lavish.android.practice.models.Cart;
-import com.lavish.android.practice.models.Product;
+import com.lavish.android.userecom.CatalogActivity;
+import com.lavish.android.userecom.databinding.ProductItemSingleVbBinding;
+import com.lavish.android.userecom.models.Cart;
+import com.lavish.android.userecom.models.Product;
 
 public class SingleVBProductViewBinder {
 

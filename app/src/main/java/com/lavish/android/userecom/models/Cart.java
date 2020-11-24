@@ -1,7 +1,6 @@
-package com.lavish.android.practice.models;
+package com.lavish.android.userecom.models;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Cart {

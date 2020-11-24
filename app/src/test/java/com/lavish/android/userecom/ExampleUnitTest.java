@@ -1,4 +1,4 @@
-package com.lavish.android.practice;
+package com.lavish.android.userecom;
 
 import org.junit.Test;
 

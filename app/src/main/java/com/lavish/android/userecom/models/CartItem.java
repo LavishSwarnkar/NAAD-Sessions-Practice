@@ -1,4 +1,4 @@
-package com.lavish.android.practice.models;
+package com.lavish.android.userecom.models;
 
 public class CartItem {
 

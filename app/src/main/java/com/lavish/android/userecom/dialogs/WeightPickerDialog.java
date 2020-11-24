@@ -1,4 +1,4 @@
-package com.lavish.android.practice.dialogs;
+package com.lavish.android.userecom.dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 
-import com.lavish.android.practice.databinding.WeightPickerDialogBinding;
-import com.lavish.android.practice.models.Cart;
-import com.lavish.android.practice.models.Product;
+import com.lavish.android.userecom.databinding.WeightPickerDialogBinding;
+import com.lavish.android.userecom.models.Cart;
+import com.lavish.android.userecom.models.Product;
 
 import androidx.appcompat.app.AlertDialog;
 
