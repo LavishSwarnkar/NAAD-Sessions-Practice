@@ -23,19 +23,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
+import com.lavish.android.practice.models.Inventory;
 import com.lavish.android.practice.models.Product;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CatalogActivity extends AppCompatActivity {
 
@@ -102,13 +99,12 @@ public class CatalogActivity extends AppCompatActivity {
 
         app.showLoadingDialog(this);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("products", products);
+        Inventory inventory = new Inventory(products);
 
         //Save on cloud
         app.db.collection("inventory")
                 .document("products")
-                .set(map)
+                .set(inventory)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
