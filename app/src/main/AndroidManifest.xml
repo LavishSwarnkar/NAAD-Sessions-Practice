@@ -12,7 +12,7 @@
         <activity android:name="com.lavish.android.userecom.LinearLayoutDemoActivity">
 
         </activity>
-        <activity android:name="com.lavish.android.userecom.CatalogActivity">
+        <activity android:name=".CatalogActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
