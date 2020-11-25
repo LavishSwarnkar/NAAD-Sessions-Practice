@@ -11,7 +11,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MyApp extends Application {
 
-
     public FirebaseFirestore db;
     private AlertDialog dialog;
     private ConnectivityManager connectivityManager;

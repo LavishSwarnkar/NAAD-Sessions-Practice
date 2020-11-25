@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Inventory {
 
-    List<Product> products;
+    public List<Product> products;
 
     public Inventory() {
     }

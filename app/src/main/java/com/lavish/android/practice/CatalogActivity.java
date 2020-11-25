@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lavish.android.practice.databinding.ActivityCatalogBinding;
@@ -39,8 +41,8 @@ public class CatalogActivity extends AppCompatActivity {
     /**
      * Saving products to Firebase
      *
-     * Approach 1 : Save each product in separate doc
-     * Approach 2 : Save all products in a single doc
+     * Approach 1 : Save each product in separate doc (Search from cloud)
+     * Approach 2 : Save all products in a single doc (Search locally)
      *
      * Constraints : 1000 Products & 2000 users
      * 50k reads / day (12AM : 12:30PM)
@@ -56,7 +58,7 @@ public class CatalogActivity extends AppCompatActivity {
 
 
     private ActivityCatalogBinding b;
-    private ArrayList<Product> products;
+    private List<Product> products;
     private ProductsAdapter adapter;
     private SearchView searchView;
     public boolean isDragAndDropModeOn;
@@ -82,7 +84,6 @@ public class CatalogActivity extends AppCompatActivity {
 
         setup();
         loadPreviousData();
-        setupProductsList();
     }
 
     private void setup() {
@@ -135,15 +136,70 @@ public class CatalogActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("products_data", MODE_PRIVATE);
         String jsonData = preferences.getString("data", null);
 
-        if(jsonData != null)
+        if(jsonData != null){
             products = new Gson().fromJson(jsonData, new TypeToken<List<Product>>(){}.getType());
+            setupProductsList();
+        }
         else
-            products = new ArrayList<>();
+            fetchFromCloud();
+    }
+
+    private void fetchFromCloud() {
+        if(app.isOffline()){
+            app.showToast(this, "Unable to save. You are offline!");
+            return;
+        }
+
+        app.showLoadingDialog(this);
+
+        //SHA-1, SHA-256
+        //key.jks -- Hashing using SHA-1/256 --> Signature (AB:67:7)
+        //User install : v50 com.whatsapp "gjgjghjghj" (APK Signature)
+        //v10000 com.whatsapp (SharedPrefs key.xml) "kgijgoeopopo" (APK Signature) (Update failed)
+
+        app.db.collection("inventory")
+                .document("products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            Inventory inventory = documentSnapshot.toObject(Inventory.class);
+                            products = inventory.products;
+                            saveLocally();
+                        } else
+                            products = new ArrayList<>();
+                        setupProductsList();
+                        app.hideLoadingDialog();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CatalogActivity.this, "Failed to save on cloud", Toast.LENGTH_SHORT).show();
+                        app.hideLoadingDialog();
+                    }
+                });
     }
 
     @Override
     public void onBackPressed() {
-        saveData();
+        new AlertDialog.Builder(this)
+                .setTitle("Unsaved changes")
+                .setMessage("Do you want to save?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        saveData();
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .show();
     }
 
     private void setupProductsList() {
